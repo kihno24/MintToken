@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: MIT 
+// Compatible with OpenZeppelin Contracts ^5.0.0 
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts@5.0.2/token/ERC20/ERC20.sol"; 
+import "@openzeppelin/contracts@5.0.2/access/Ownable.sol";
+
+contract UniqueFestinToken is ERC20, Ownable {
+
+    // Define events for logging
+    event TokensIssued(address indexed recipient, uint256 amount);
+    event TokensBurned(address indexed burner, uint256 amount);
+    event TokensTransferred(address indexed sender, address indexed recipient, uint256 amount);
+
+    constructor(address initialOwner)
+        ERC20("UniqueFestinToken", "UFSTN")
+        Ownable(initialOwner)
+    {}
+
+    // Function to mint tokens to a specified address
+    function issueTokens(address recipient, uint256 amount) public onlyOwner {
+        _mint(recipient, amount);
+        emit TokensIssued(recipient, amount); // Emit the event
+    }
+
+    // Function to mint tokens to the owner's address
+    function issueTokens(uint256 amount) public onlyOwner {
+        _mint(msg.sender, amount);
+        emit TokensIssued(msg.sender, amount); // Emit the event
+    }
+
+    // Function to transfer tokens to a specified address
+    function sendTokens(address recipient, uint256 amount) public {
+        transfer(recipient, amount);
+        emit TokensTransferred(msg.sender, recipient, amount); // Emit the event
+    }
+
+    // Function to burn tokens from the caller's address
+    function destroyTokens(uint256 amount) public {
+        _burn(msg.sender, amount);
+        emit TokensBurned(msg.sender, amount); // Emit the event
+    }  
+
+}
+
+      
